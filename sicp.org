@@ -612,3 +612,26 @@ grows linearly to `a`, just as the number of steps.
 #+end_src
 
 We now illustrate the process geenrated by this implementation of `+` in evaluating `(+ 4 5)`.
+Notice that this process is linear rather than recursive, because it is completely determined by
+the fixed set of state variables `a`, `b`, and does not grow or shrink.
+
+(+ 4 5)
+(if (= 4 0) 5 (+ (dec 4) (inc 5)))
+(if #f 5 (+ (dec 4) (inc 5))
+(+ (dec 4) (inc 5))
+(+ 3 6)
+(if (= 3 0) 6 (+ (dec 3) (inc 6)))
+(if #f 6 (+ (dec 3) (inc 6)))
+(+ (dec 3) (inc 6))
+(+ 2 7)
+(if (= 2 0) 7 (+ (dec 2) (inc 7)))
+(if #f 7 (+ (dec 2) (inc 7)))
+(+ (dec 2) (inc 7))
+(+ 1 8)
+(if (= 1 0) 8 (+ (dec 1) (inc 8)))
+(if #f 0 (+ (dec 1) (inc 8)))
+(+ (dec 1) (inc 8))
+(+ 0 9)
+(if (= 0 0) 9 (+ (dec 0) (inc 9)))
+(if #t 9 (+ (dec 0) (inc 9)))
+9
