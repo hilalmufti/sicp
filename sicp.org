@@ -1,0 +1,614 @@
+#+PROPERTY: header-args:scheme :session sicp :cmd "racket" :results value
+#+title: Sicp
+
+* 1.1 The Elements of Programming
+#+begin_src scheme
+(require sicp)
+#+end_src
+
+#+RESULTS:
+: #<void>
+
+** 1.1.1 Expressions
+#+begin_src scheme
+486
+#+end_src
+
+#+RESULTS:
+: 486
+
+
+#+begin_src scheme
+(+ 137 349)
+#+end_src
+
+#+RESULTS:
+: 666
+
+
+#+begin_src scheme
+(* 5 99)
+#+end_src
+
+#+RESULTS:
+: 495
+
+
+#+begin_src scheme
+(/ 10 5)
+#+end_src
+
+#+RESULTS:
+: 2
+
+
+#+begin_src scheme
+(+ 2.7 10)
+#+end_src
+
+#+RESULTS:
+: 12.7
+
+** 1.1.4 Compound Procedures
+#+begin_src scheme
+(define (square x) (* x x))
+
+(square 21)
+#+end_src
+
+#+RESULTS:
+: 441
+
+
+#+begin_src scheme
+(square (+ 2 5))
+#+end_src
+
+#+RESULTS:
+: 49
+
+
+#+begin_src scheme
+(square (square 3))
+#+end_src
+
+#+RESULTS:
+: 81
+
+
+#+begin_src scheme
+(define (sum-of-squares x y)
+  (+ (square x) (square y)))
+
+(sum-of-squares 3 4)
+#+end_src
+
+#+RESULTS:
+: 25
+
+
+#+begin_src scheme
+(define (f a)
+  (sum-of-squares (+ a 1) (* a 2)))
+
+(f 5)
+#+end_src
+
+#+RESULTS:
+: 136
+
+** 1.1.6 Conditional Expressions and Predicates
+#+begin_src scheme
+(define (abs x)
+  (if (< x 0)
+      (- x)
+      x))
+#+end_src
+
+#+RESULTS:
+: #<void>
+
+
+#+begin_src scheme
+(define (>= x y) (not (< x y)))
+#+end_src
+
+#+RESULTS:
+: #<void>
+
+
+*** Exercise 1.1
+Recall that the interpreter runs in a *read-eval-print loop*. First, the
+interpreter reads in the expression `10`. We assume that the result of this step
+is the primitive expression `10` is then to be evaluated by the interpreter.
+Recall that the value of numerals are the numbers that they name. So the the
+expression `10` evaluates to the value `10`. Then, the result `10` is printed.
+#+begin_src scheme
+10
+#+end_src
+
+#+RESULTS:
+: 10
+
+We once again step through the *read-eval-print loop*. First, the interpreter
+reads in the expression `(+ 5 3 4)`. We assume that the result of this step is
+that the expression `(+ 5 3 4)` is then to be evaluated by the interpreter.
+Notice that `(+ 5 3 4)` is a *compound expression*, and, in particular, it is a
+*combination*, since it is a list of expressions delimited by parentheses. The
+*operator* of the combination `(+ 5 3 4)` is the leftmost element of the list,
+`+`. The operands of the combination `(+ 5 3 4)` are all the other elements,
+`5`, `3`, `4`. Recall that to evaluate a combination, the interpreter:
+1) Evaluates the subexpression of the combination
+2) Applies the operator to the operands.
+First consider the subexpression `+`. Recall that we may assume that the symbols
+such as `+` and `*` are also included in the global environment, and are
+assosciated with the sequences of machine instructions that are their "values".
+Then, the values of the numerals `5`, `3`, and `4` are simply the numbers that
+they name. Recall from 1.1.5 that we may assume that the mechanism for applying
+primitives procedures, such as `+`, is built into the interpreter. So the value
+of `(+ 5 3 4)` is `12`. Then, the result `12` is printed.
+#+begin_src scheme
+(+ 5 3 4)
+#+end_src
+
+#+RESULTS:
+: 12
+
+This is very similar to the interpreter's response to the expression
+`(+ 5 3 4)`. First, the expression `(- 9 1)` is read by the interpreter. Then,
+the subexpression `-` evaluates to the machine instructions that perform the
+subtraction operation, and the numerals `9` and `1` evaluate to the numbers that
+they name. Then, we assume the mechanism for applying the primitive procedure
+`-` to the expressions `9` and `1` is built into the interpreter, and that this
+process yields the value `8`. The value `8` is then printed as a result.
+#+begin_src scheme
+(- 9 1)
+#+end_src
+
+#+RESULTS:
+: 8
+
+This is also similar to the previous two problems. First, the expression
+`(/ 6 2)` is read by the interpreter. Then, the subexpression `/` evaluates to
+the machine instructions that perform the division operation, and the numerals
+`6` and `2` evaluate to the numbers `6` and `2`. Then, we assume the mechanism
+for applying the primitive procedure `/` its arguments is built into the
+interpreter, and that this process yields the value `3`. The value `3` is then
+printed as a result.
+#+begin_src scheme
+(/ 6 2)
+#+end_src
+
+#+RESULTS:
+: 3
+
+This is the first nested combination we have seen thus far. We skip discussions
+of reading and printing results, as they are very similar to the previous
+problems. To evaluate the combination `(+ (* 2 4) (- 4 6))`, first we evaluate
+the subexpressions of the combination. The subexpression `+` evaluates to the
+machine instructions for performing addition. Then the subexpression `(* 2 4)`
+is itself a combination. To evaluate `(* 2 4)` we must first evaluate each
+subexpression. The subexpression `*` evaluates to the machine instructions for
+performing addition. The numeral `2` evaluates to the number `2`. And the
+numeral `4` evaluates to the number `4`. Then, we assume the process for
+applying `*` to `2`, `4`, is built into the interpreter, and it returns the
+value `8`. Similarly, the subexpression `(- 4 6)` is a combination, and returns
+the value `-2`. So then `+` is applied to the operands `8`, `-2`, to return `6`.
+#+begin_src scheme
+(+ (* 2 4) (- 4 6))
+#+end_src
+
+#+RESULTS:
+: 6
+
+Recall that `define` is a special form in Scheme. Evaluating `(define a 3)`
+simply assosciates the value `3` with name `a` in the global environment.
+#+begin_src scheme
+(define a 3)
+#+end_src
+
+#+RESULTS:
+: #<void>
+
+To evaluate this `define` form, the interpreter first evaluates the combination
+`(+ a 1)`. The expression `a` evaluates to the number `3` by the previous
+expression. And then `1` evaluates to the number `1` since numerals evaluate to
+the number they name. Then, `+` evaluates to the machine instructions for `+`,
+whose application we assume is given to yield `4`. So the name `b` is
+assosciated with the value `4` in the global environment.
+#+begin_src scheme
+(define b (+ a 1))
+#+end_src
+
+We follow the standard rules for evaluating combinations. The symbol `+`
+evaluates to the machine instructions for `+`. Then `a` evaluates to the number
+`3`, `b` evaluates to the number `4`
+#+begin_src scheme
+(+ a b (* a b))
+#+end_src
+
+#+RESULTS:
+: 19
+
+
+#+begin_src scheme
+(= a b)
+#+end_src
+
+#+RESULTS:
+: #f
+
+
+#+begin_src scheme
+(if (and (> b a) (< b (* a b)))
+    a
+    b)
+#+end_src
+
+#+RESULTS:
+: 3
+
+
+#+begin_src scheme
+(cond ((= a 4) 6)
+      ((= b 4) (+ 6 7 a))
+      (else 25))
+#+end_src
+
+#+RESULTS:
+: 16
+
+
+#+begin_src scheme
+(+ 2 (if (> b a) b a))
+#+end_src
+
+#+RESULTS:
+: 6
+
+
+#+begin_src scheme
+(* (cond ((> a b) a)
+         ((< a b) b)
+         (else -1))
+   (+ a 1))
+#+end_src
+
+#+RESULTS:
+: 16
+
+
+*** Exercise 1.2
+#+begin_src scheme
+
+(/ (+ 5
+      4
+      (- 2
+         (- 3
+            (+ 6
+               (/ 4 5)))))
+   (* 3
+      (- 6 2)
+      (- 2 7)))
+
+#+end_src
+
+#+RESULTS:
+: -37/150
+
+
+*** Exercise 1.3
+#+begin_src scheme
+(define (smallest x y z)
+  (cond ((and (<= x y) (<= x z)) x)
+        ((and (<= y x) (<= y z)) y)
+        ((and (<= z x) (<= z y)) z)))
+
+(smallest 1 2 3)
+#+end_src
+
+#+RESULTS:
+: 1
+
+
+#+begin_src scheme
+(define (sum-squares-two-larger x y z)
+  (cond ((= x (smallest x y z)) (sum-of-squares y z))
+        ((= y (smallest x y z)) (sum-of-squares x z))
+        (else (sum-of-squares y z))))
+
+(sum-squares-two-larger 1 2 3)
+
+#+end_src
+
+#+RESULTS:
+: 13
+
+*** Exercise 1.4
+#+begin_src scheme
+(define (a-plus-abs-b a b)
+  ((if (> b 0) + -) a b))
+
+(a-plus-abs-b 3 4)
+#+end_src
+
+#+RESULTS:
+: 7
+
+To describe the behavior of the procedure `a-plus-abs-b`, we step through the
+evaluation of two combinations: `(a-plus-abs-b 3 4)` and `(a-plus-abs-b 3 -4)`.
+To evaluate the combination `(a-plus-abs-b 3 4)`, we first evaluate the operands
+`3` and `4`, which are primitive, and thus evaluate to the numbers `3`, `4`
+respectively. Then, the operator `a-plus-abs-b` evaluates to the compound
+procedure defined above. We then apply the procedure `a-plus-abs-b` to the
+arguments `3`, `4`. Recall that in order to apply a compound procedure to
+arguments, we evaluate the body of the procedure with each formal parameter
+replaced by the corresponding argument. In this case, we evaluate the
+combination `((if (> b 0) + -) a b)`, with the name `a` assosciated with the
+value 3, and the name `b` assosciated with teh value `4`. To evaluate this
+combination, we first evaluate the operands `a`, `b`, which evaluate to `3`,
+`4` respectively. Then, we evaluate the operand `(if (> b 0) + -)`. Recall that
+to evaluate an if-expression, first, the interpreter evaluates the predicate. If
+the predicate returns true, then the interpreter evaluates the consequent,
+otherwise the interpreter evaluates the alternative. The predicate in this case
+is `(> b 0)`. To evaluate the combination `(> b 0)`, the interpreter first
+evaluates the operands `b` and `0` to `4` and `0` respectively, then the
+operator `>` evaluates to the machine instructions for performing the
+greater-than operation. Then, we may assume the machinery for applying the
+primitive `>` operation to the arguments `4`, `0` is built into the interpreter,
+and that this process returns `#t`. Then, the consequent `+` is evaluated to the
+machine isntructions for `+`, and is applied to `a`, `b`. The case for `b=-4` is
+similar, but the if-expression evaluates to `-` in this case.
+
+*** Exercise 1.5
+#+begin_src scheme
+(define (p) (p))
+(define (test x y)
+  (if (= x 0) 0 y))
+
+(test 0 (p))
+#+end_src
+_Applicative-order evaluation_: Applicative-order evaluation results in an
+infinite recursion.
+
+Suppose the interpreter uses applicative-order evaluation. We evaluate the
+combination `(test 0 (p))` using applicative-order evaluation. First, the
+operands `0` and `(p)` are evaluated. Recall that numerals are primitive, and
+evaluate to the numbers that they name. So `0` evaluates to the number `0`.
+Then, the expression `(p)` is actually a combination. Notice that there are no
+operands of this combination. Then the symbol operator `p` evaluates to the
+body of `p` defined above. Then, we apply the compound procedure `p`, we
+simply evaluate the body of `p`, since `p` has no formal parameters. But notice
+that the body of `p` is simply the combination `(p)`. To evaluate this
+combination, notice that there are no operands to evaluate. Then, the operator
+`p` simply evaluates to the procedure definition of `p`. Then, to apply the
+compound procedure `p`, we simply evaluate the body of `p`, since `p` has no
+formal parameters. Notice that we just stated this process, and there is no end
+in sight! So evaluating `(test 0 (p))` results in an infinite recursion, mainly
+because of the evaluation of the subexpression `(p)`.
+
+_Normal-order evaluation_: Normal-order evaluation evaluates to the value `0`.
+
+Suppose the interpreter uses normal-order evaluation. We evaluate the expression
+`(test 0 (p))` using applicative-order evaluation. First, we substitute the
+operands `0`, `(p)` into the body of `test`, resulting in the expression
+`(if (= 0 0) 0 (p))`. This is an expression consisting only of primitive
+operators (modulo the operands). Then, to evaluate an if-expression, we first
+evaluate the test `(= 0 0)`. The operator `=` we assume evaluates to the machine
+instruction for testing equality. The operands `0`, `0` are primitive and
+each evaluate to the number `0`. Then, we assume the mechanism for applying the
+procedure `=` to the arguments `0`, `0` is built into the interpreter, and
+returns the value `#t`. Then, since the predicate evaluated to `#t`, the
+interpreter evaluates the consequent `0`, which self-evaluates to `0`.
+So we skip evaluating `(p)` altogether!
+
+** 1.1.7 Example: Square Roots by Newton's Method
+
+#+begin_src scheme
+(define (sqrt-iter guess x)
+  (if (good-enough? guess x)
+      guess
+      (sqrt-iter (improve guess x) x)))
+
+(define (improve guess x)
+  (average guess (/ x guess)))
+
+(define (average x y)
+  (/ (+ x y) 2))
+
+(define (good-enough? guess x)
+  (< (abs (- (square guess) x)) 0.001))
+
+(define (sqrt x)
+  (sqrt-iter 1.0 x))
+
+(sqrt 9)
+#+end_src
+
+#+RESULTS:
+: 3.00009155413138
+
+#+begin_src scheme
+(sqrt 1234567890123)
+#+end_src
+
+#+RESULTS:
+: 1111111.1061109055
+
+#+begin_src scheme
+(sqrt (+ 100 37))
+#+end_src
+
+#+RESULTS:
+: 11.704699917758145
+
+#+begin_src scheme
+(sqrt (+ (sqrt 2) (sqrt 3)))
+#+end_src
+
+#+RESULTS:
+: 1.7739279023207892
+
+#+begin_src scheme
+(square (sqrt 1000))
+#+end_src
+
+#+RESULTS:
+: 1000.000369924366
+
+*** Exercise 1.6
+If Alyssa attemps `new-if` to compute square roots, the interpreter will result
+in infinite recursion. To see this, we will evalaute the combination `(sqrt 3)`.
+The operand `3` is a numeral, so evaluates to the number `3`. And the operator
+`sqrt` evaluates to the compound procedure `sqrt`. Then, to apply the operator
+`sqrt` we evaluate the body of `sqrt` with the formal parameter `x` replaced by
+the corresponding argument `3`. That is, evaluate the combination `(sqrt-iter 1.0 3)`.
+Then, to evaluate the combination `(sqrt-iter 1.0 3)`, we evaluate the operands `1.0`, `3` to
+themselves, then the operator `sqrt-iter` evaluates to the compound procedure `sqrt-iter`. Then,
+to apply the compound procedure `sqrt-iter` to the arguments `1.0`, `3`, we evaluate the body of
+`sqrt-iter` with the formal parameter `guess` replaced by `1.0`, and the formal parameter `x`
+replaced by `3`. That is, evaluate the combination
+`(new-if (good-enough? 1.0 3) 1.0 (sqrt-iter (improve 1.0 3) 3))`. And this is where we run into
+problems! Notice that `new-if` is a compound procedure, NOT a special form. Thus, we follow the
+standard rules for evaluating combinations. We first evaluate the operand `(good-enough? 1.0 3)`.
+Notice that this operand is a combinati4on. To evaluate the combination `(good-enough? 1.0 3)`, we
+evaluate the operands `1.0`, `3` to themselves, and `good-enough?` to the compound procedure
+`good-enough?`. Then, to apply the compound procedure `good-enough?` to the arguments `1.0`, `3`,
+we evaluate the body of `good-enough` with the formal parameter `guess` replaced by `1.0`, and the
+formal parameter `x` replaced by `3`. That is, evaluate the combination
+`(< (abs (- (square 1.0) 3)) 0.001)`. I think you get the idea of how we evaluate combinations by
+now, so we will skip the steps to evaluate this combination, and spoil you that it returns the false
+`#f`. Let us return to `(new-if (good-enough? 1.0 3) 1.0 (sqrt-iter (improve 1.0 3) 3))`. The
+operand `1.0` is a numeral, so evaluates to the number `1.0`. But then we must evaluate the
+combination `(sqrt-iter (improve 1.0 3) 3)`. Notice that this is a combination! Let us skip over
+the excruciating detail of the resulting evaluation and notice the following: the alternative
+`(sqrt-iter (improve guess x) x)` will continue to always be evaluated, resulting in infinite
+recursion!
+
+*** Exercise 1.7
+Notice that the `good-enough?` test struggles for computing square roots of very small numbers less than 0.001.
+Indeed, notice that `(sqrt 0.001)` evaluates to about `0.041` when the true square root is about
+`0.032`. Another example: notice that `(sqrt 0.0001)` evaluates to about `0.032`, when the true
+square root is exactly `0.01`. This test also struggles for computing square roots of very large
+numbers. In particular, the evaluation of `(sqrt x)` when `x` has more than 13 digits fails to
+terminate. For example, the evaluation of the combination `(sqrt 12345678901234)` fails to terminate.
+
+Now consider our improved implementation of `sqrt` via an improved implementation of the
+`good-enough?` procedure. The improved `good-enough?` procedure tests if `guess` changes by less
+than 1/10000 per iteration. Notice that not only did our old square roots such as `(sqrt 3)`, `(sqrt 9)`
+evaluate correctly as before, but now the `(sqrt 0.001)`, `(sqrt 0.0001)`, and `(sqrt 12345678901234)`
+now evaluate correctly, too!
+
+#+begin_src scheme
+(define (good-enough? guess x)
+  (< (abs (- guess (improve guess x)) (* 0.0001 guess))))
+
+(sqrt 3)
+#+end_src
+
+#+RESULTS:
+: 1.7320508075688772
+
+#+begin_src scheme
+(sqrt 9)
+#+end_src
+
+#+RESULTS:
+: 3
+
+#+begin_src scheme
+(sqrt 0.001)
+#+end_src
+
+#+RESULTS:
+: 0.03162277660168379
+
+#+begin_src scheme
+(sqrt 0.0001)
+#+end_src
+
+#+RESULTS:
+: 0.01
+
+#+begin_src scheme
+(sqrt 12345678901234)
+#+end_src
+
+#+RESULTS:
+: 3513641.8288200633
+
+*** Exercise 1.8
+#+begin_src scheme
+(define (cube x)
+  (* x x x))
+
+(define (cbrt-iter guess x)
+  (if (cbrt-good-enough? guess x)
+      guess
+      (cbrt-iter (cbrt-improve guess x) x)))
+
+(define (cbrt-improve guess x)
+  (/ (+ (/ x (square guess)) (* 2 guess))
+     3))
+
+(define (cbrt-good-enough? guess x)
+  (< (abs (- (cube guess) x)) 0.001))
+
+
+; (cbrt-good-enough? 3.0 27)
+
+(define (cbrt x)
+  (cbrt-iter 1.0 x))
+
+(cbrt 27)
+#+end_src
+
+#+RESULTS:
+: 3.0000005410641766
+
+* 1.2 Procedures and the Processes They Generate
+
+** Linear Recursion and Iteration
+
+*** Exercise 1.9
+
+#+begin_src scheme
+(define (+ a b)
+  (if (= a 0) b (inc (+ (dec a) b))))
+#+end_src
+
+We illustrate the process generated by this implementation of `+` in evaluating `(+ 4 5)`.
+Notice that this process is recursive because it builds up a chain of deferred `inc` operations,
+which it then reduces. Moreover, the length of the chain of deferred increments in this case
+grows linearly to `a`, just as the number of steps.
+
+(+ 4 5)
+(if (= 4 0) 5 (inc (+ (dec 4) 5)))
+(if #f 5 (inc (+ (dec 4) 5)))
+(inc (+ (dec 4) 5))
+(inc (+ 3 5))
+(inc (if (= 3 0) 5 (inc (+ (dec 3) 5))))
+(inc (if #f 5 (inc (+ (dec 3) 5))))
+(inc (inc (+ (dec 3) 5)))
+(inc (inc (+ 2 5)))
+(inc (inc (if (= 2 0) 5 (inc (+ (dec 2) 5)))))
+(inc (inc (if #f 5 (inc (+ (dec 2) 5)))))
+(inc (inc (inc (+ (dec 2) 5))))
+(inc (inc (inc (+ 1 5))))
+(inc (inc (inc (if (= 0 1) 5 (inc (+ 0 5))))))
+(inc (inc (inc (if #f 5 (inc (+ 0 5))))))
+(inc (inc (inc (inc (+ 0 5)))))
+(inc (inc (inc (inc (if (= 0 0) 5 (inc (+ (dec 0) 5)))))))
+(inc (inc (inc (inc (if #t 5 (inc (+ (dec 0) 5)))))))
+(inc (inc (inc (inc 5))))
+(inc (inc (inc 6)))
+(inc (inc 7))
+(inc 8)
+9
+
+#+begin_src scheme
+(define (+ a b)
+  (if (= a 0) b (+ (dec a) (inc b))))
+#+end_src
+
+We now illustrate the process geenrated by this implementation of `+` in evaluating `(+ 4 5)`.
